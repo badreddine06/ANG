@@ -1,0 +1,71 @@
+<div class="container">
+  <nav class="p-2 m-2 border border-info">
+    <button *ngIf="authService.hasRoles('ADMIN')" class="btn btn-outline-info" (click)="handleNewProduct()">Add Product</button>
+  </nav>
+
+  <!--  <div *ngIf="errorMessage" class="text-danger" 
+   {{errorMessage}}
+    </div>-->
+
+  <div class="card">
+    <div class="card-header"> Products List   </div>
+    <div class="card-body">
+      {{SearchFormGroup.value |json }}
+      <!-- exemple pour mieux comprendre data biding  {{SearchFormGroup.value |json }}  -->  
+      
+      <!-- formGroup]="SearchFormGroup" pour associer avec ma fct  ce formulair represente cette methode  -->
+      <!-- (ngSubmit)=""pour valider se formulaire   -->  
+    <form [formGroup]="SearchFormGroup" (ngSubmit)="handleSearchProduct()">
+      <div class="input-group">
+        <label class="input-group-text">keyword:</label>
+          <!-- ( formControlName="Keyword" la valeur que je doit taber il va s'executer dans keyword de methode SearchFormGroup comme un data biding   -->  
+          <!-- (si je change ici sera changer dans wone de text si je change dans text il va chenger dans la methode -->  
+        <input type="text" class="form-control" formControlName="keyword">
+        <button class="btn btn-info">
+          <i class="bi bi-search"></i>
+        </button>
+      </div>
+    </form>
+      <table class="table">
+        <thead>
+        <tr>
+          <th>ID </th> <th> NAME </th> <th> PRIC </th>
+        </tr>
+        </thead>
+        <tbody *ngFor="let p of products">
+        <tr >
+          <td>{{ p.id }}</td>
+          <td>{{ p.name }}</td>
+          <td>{{ p.price}}</td>
+          <td>
+            <i  *ngIf="p.promotion==true"   > selected  </i>
+      
+            <button (click)="handleSetPromotion(p)"   [ngClass]="{'btn btn-danger': p.promotion}" >
+              <i class="bi bi-clipboard2-check-fill"></i>
+            <span *ngIf="p.promotion==true"> Promo Off </span>
+            <span *ngIf="p.promotion==false"class="btn btn-success"> Promo On </span></button>
+            <!--          pour changer message Promo Enable or Promo Desable-->
+          </td>
+          <td *ngIf="authService.hasRoles('ADMIN')">
+            <button (click)="handleDeleteProduct(p)" class="btn btn-danger"> Delete
+              <i class="bi bi-trash"></i>
+            </button>
+          </td>
+          <td *ngIf="authService.hasRoles('ADMIN')">
+            <button (click)="handleEditProduct(p)" class="btn btn-success"> Edit
+              <i class="bi bi-file"></i>
+            </button>
+          </td>
+        </tr>
+        </tbody>
+      </table>
+      <ul class="nav nav-pills">
+        <!-- car ona pas du tableu donc on vas cree un tableau a partir du totalpage  -->
+        <li *ngFor="let item of [].constructor(this.totalPages) ; let i=index" > 
+           <a (click)="Gotopage(i)"  [ngClass]="i==currentPage?'btn-info':'btn-outline-info' " class="btn  ms-1 mt-1"> {{i}}</a>
+        </li>
+       
+      </ul>
+    </div>
+  </div>
+</div>
